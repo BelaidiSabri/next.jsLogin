@@ -32,7 +32,7 @@ const login = async (req, res) => {
 
     // If both username and password are valid, generate a JWT token for the user
   
-    const token = jwt.sign({ exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,username: user.username }, process.env.JWT_SECRET);
+    const token = jwt.sign({username: user.username }, process.env.JWT_SECRET);
     const serialised = serialize("theToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV !== "development",

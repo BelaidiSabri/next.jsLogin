@@ -1,25 +1,29 @@
-import { NextResponse } from 'next/server';
 import { verify } from 'jsonwebtoken';
+import { NextResponse } from 'next/server';
 
-const secret = process.env.JWT_SECRET;
 
 
-export default function middleware(req) {
-  const  {cookies}  = req
-  const jwt = cookies.theToken
-  console.log('cookies', cookies);
-  console.log('jwt', jwt);
+
+export default async function middleware(req) {
+  const secret = process.env.JWT_SECRET;
+  const token = await req.cookies.get('theToken')?.value
+  console.log('jwt', token);
   
   if (req.nextUrl.pathname.startsWith('/dashboard')) {
-    if (jwt===undefined){
+
+    if (!token){
       return NextResponse.rewrite(new URL('/', req.url))
     }
     try {
-      verify(jwt, secret);
+      const test = 'passed by try'
+      const payload = verify(token, secret);
+      console.log('payload',test);
       // Token is valid, allow access to the dashboard
       return NextResponse.next();
     } catch (error) {
-        return NextResponse.rewrite(new URL('/', req.url))
+        const test = 'passed by catch'
+        console.log('payload',test);
+        return NextResponse.rewrite(new URL('/home', req.url))
     }
   }
   return NextResponse.next();
