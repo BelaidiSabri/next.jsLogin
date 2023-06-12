@@ -1,11 +1,11 @@
 import { serialize } from "cookie";
-import jwt from "jsonwebtoken";
+import { SignJWT, JWT } from "jose";
+import { getJwtSecretkey } from "../../utils/auth";
 
+// A default username and password that we can get from backend (password should be hashed in real project)
 
-// Simulated user data in the database
-
-const username= "admin"
-const password= "admin"
+const username = "admin";
+const password = "admin";
 
 const users = [
   {
@@ -13,39 +13,46 @@ const users = [
     password: password,
   },
 ];
+// Login API
 
 const login = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password,rememberMe } = req.body;
+    console.log('remeber me',rememberMe);
+    const secret = new TextEncoder().encode(getJwtSecretkey());
 
-    // Check if user with the provided username exists in the database 
+  // Check if user with the provided username exists in the database
+
     const user = users.find((user) => user.username === username);
     if (!user) {
       return res.status(400).json({ error: "Invalid username or password" });
     }
 
-    // Compare the provided password with password stored in the database 
-    
-    if (user.password!==password) {
+  // Compare the provided password with the password stored in the database 
+
+    if (user.password !== password) {
       return res.status(400).json({ error: "Invalid username or password" });
     }
 
-    // If both username and password are valid, generate a JWT token for the user
+  // If both username and password are valid, generate a JWT token for the user
+ 
+    const token = await new SignJWT({ username: user.username })
+      .setProtectedHeader({ alg: "HS256" })
+      .setExpirationTime(rememberMe?"30d":'10s') 
+      .sign(secret);
+
+  // Set token in the browser cookies
   
-    const token = jwt.sign({username: user.username }, process.env.JWT_SECRET);
-    const serialised = serialize("theToken", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== "development",
-      sameSite: "strict",
-      maxAge: 60 * 60 * 24 * 30,
+    res.setHeader("Set-Cookie", serialize("theToken", token, {
       path: "/",
-    });
-    res.setHeader("Set-Cookie", serialised);
+    }));
     res.status(200).json({ message: "Success!" });
-  }catch (err) {
+    
+  } catch (err) {
     console.log(err);
-    res.status(500).json({ success: false, error: "Not authorized"});
+    res.status(500).json({ success: false, error: "Not authorized" });
   }
 };
 
 export default login;
+

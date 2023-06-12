@@ -1,0 +1,139 @@
+
+.navbar {
+    background-color: rgba(240, 248, 255, 0.02);
+    height: 6rem;
+    color: black;
+    width: 100vw;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    box-shadow: 1px 4px 18px -1px rgba(0, 0, 0, 0.217);
+    position: relative; 
+  }
+  .logo {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  .ul {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .li {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+  }
+  .navbar a:visited {
+    color: black;
+  }
+  .navbar a{
+    text-decoration: none;
+  }
+  
+  
+  .li:last-child {
+    margin-right: 0;
+  }
+
+
+  .link {
+    color: black;
+    text-decoration: none;
+    padding: 1rem;
+    font-size: 2rem;
+    
+  }
+  
+  .link {
+    position: relative;
+  }
+  
+  .link::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #000;
+    transition: width 300ms ease-in-out;
+  }
+  
+  .link:hover::before {
+    width: 100%;
+  }
+  
+
+  .button {
+    width: 10rem;
+    height: 2.5rem;
+    color: #29362a;
+    background-color: transparent;
+    border: 1px solid rgb(26, 31, 22);
+    border-radius: 2rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  
+  .button:hover {
+    color: white;
+    background-color: black;
+    border: 1px solid rgb(255, 255, 255);
+    transition: background-color 300ms ease, color 300ms ease;
+  }
+  .hamburger{
+   display: none;
+   cursor: pointer;
+  }
+  .span{
+    display: block;
+    margin: 0.5rem auto;
+    margin-left: 2rem;
+    width: 3rem;
+    height: 0.25rem;
+    background-color: black;
+    border-radius: 0.1rem;
+  }
+
+  @media (max-width: 414px) {
+    .hamburger{
+      display: block;
+     }  
+    .menu_ul{
+      flex-direction: column;
+      position: absolute;
+      left: 0;
+      top: 0;
+      padding: 1rem;
+      background-color: black;
+      height: 100vh;
+      z-index: 10;
+    } 
+    .link{
+      color: white;
+    }
+    .ul{
+      display: none;
+    }
+    .button {
+      color: white
+    }
+    .button:hover {
+      color: black;
+      background-color: white;
+      border: 1px solid rgb(255, 255, 255);
+      transition: background-color 300ms ease, color 300ms ease;
+    }
+    .navbar a:visited {
+      color: white;
+    }
+  }
+
+  

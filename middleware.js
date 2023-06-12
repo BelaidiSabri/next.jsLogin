@@ -1,23 +1,43 @@
-import { verify } from 'jsonwebtoken';
+
 import { NextResponse } from 'next/server';
+import { verifyAuth } from './utils/auth';
 
 
 
 
 export default async function middleware(req) {
-  const secret = process.env.JWT_SECRET;
   const token = await req.cookies.get('theToken')?.value
   console.log('jwt', token);
-  
-  if (req.nextUrl.pathname.startsWith('/dashboard')) {
+  const verifiedtoken =token&&(await verifyAuth(token).catch((err)=>console.log(err)))
 
-    if (!token){
+  if (req.nextUrl.pathname === '/') {
+    if (!verifiedtoken) {
+      return NextResponse.redirect(new URL('/LoginForm', req.url));
+    }
+    // Redirect to the dashboard if the person is authenticated
+    return NextResponse.redirect(new URL('/dashboard', req.url));
+  }
+
+  if (req.nextUrl.pathname.startsWith('/dashboard') && !verifiedtoken){
+    return NextResponse.redirect(new URL('/LoginForm',req.url))
+  }
+  if (req.url.includes('/LoginForm')&& verifiedtoken){
+    return NextResponse.redirect(new URL('/dashboard',req.url))
+  }
+}
+
+/* 
+
+  if (req.nextUrl.pathname.startsWith('/dashboard')) {
+    const payload =verify(token,process.env.JWT_SECRET);
+    console.log(payload);
+
+    if (!verifiedtoken){
       return NextResponse.rewrite(new URL('/', req.url))
     }
     try {
       const test = 'passed by try'
-      const payload = verify(token, secret);
-      console.log('payload',test);
+     // verify(token,process.env.JWT_SECRET);
       // Token is valid, allow access to the dashboard
       return NextResponse.next();
     } catch (error) {
@@ -27,7 +47,7 @@ export default async function middleware(req) {
     }
   }
   return NextResponse.next();
-}
+} */
 
 
 
